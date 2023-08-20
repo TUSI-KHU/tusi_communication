@@ -1,0 +1,57 @@
+#include <SoftwareSerial.h>
+#include <Arduino.h>
+
+typedef struct
+{
+  int date;
+  int data;
+  unsigned long a;
+  int f;
+} Payload;
+
+SoftwareSerial mySerial(A5, A4);  // Create a SoftwareSerial instance
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(57600);
+  mySerial.begin(57600);  // Initialize SoftwareSerial
+}
+
+void printHex(const uint8_t *data, size_t length) {
+  for (size_t i = 0; i < length; i++) {
+    if (data[i] < 16) {
+      mySerial.print("0");  // Print leading zero for single-digit hex values
+      Serial.print("0");
+    }
+    mySerial.print(data[i], HEX);  // Print the byte in hexadecimal
+    Serial.print(data[i], HEX);
+  }
+}
+
+void loop()
+{
+  digitalWrite(LED_BUILTIN, LOW);
+  Payload pl;
+  pl.date = 0x4a;
+  pl.data = 0xff;
+  pl.a = 0xF4240;
+  pl.f = 0xfa;
+
+  // Convert the binary data to hexadecimal and send it using SoftwareSerial
+  const uint8_t *buf = reinterpret_cast<const uint8_t *>(&pl);
+  size_t bufSize = sizeof(pl);
+
+  mySerial.print("AT+SEND=120,");
+  Serial.print("AT+SEND=120,");
+  mySerial.print(bufSize * 2, DEC);
+  Serial.print(bufSize * 2, DEC);
+  mySerial.print(',');
+  Serial.print(',');
+  printHex(buf, bufSize);
+  Serial.println();
+  mySerial.println();  // Move to the next line
+
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+}
