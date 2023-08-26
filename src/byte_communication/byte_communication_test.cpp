@@ -42,7 +42,6 @@ int main() {
 	//이 주소로부터 sizeof(Payload)만큼의 바이트를 읽어오면 Payload 구조체의 내용을 바이트 단위로 볼 수 있게 됩니다.
 	//통신으로 읽어올 떄는 단순 데이터값만을 읽어옴, 주소값은 읽어보기 불가능 -> 000fa0f4240000ff0004a 값만을 이용하여 대입 
 	//-> 0인 부분들을 자른다면? bit shift를 통해 잘라진 것들을 송수신
-	
 	size_t bufsize = sizeof(pl);
 
 	printf("%u\n", bufsize * 2);
